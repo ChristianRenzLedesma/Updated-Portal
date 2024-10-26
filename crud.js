@@ -2,7 +2,7 @@ let students = [];
 
 $(document).ready(function() {
   let stringData = localStorage.getItem('students');
-  students = JSON.parse(stringData) ?? [];
+  students = JSON.parse(stringData) || [];
   Table();
 });
 

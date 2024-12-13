@@ -1,15 +1,17 @@
-let students = [];
+let students = JSON.parse(localStorage.getItem('students')) || [];
 
-$(document).ready(function() {
+let saveData = () => localStorage.setItem('students', JSON.stringify(students));
+
+$(document).ready(function () {
   let stringData = localStorage.getItem('students');
   students = JSON.parse(stringData) || [];
   Table();
 });
 
-$("#profileImage").change(function() {
+$("#profileImage").change(function () {
   if (this.files && this.files[0]) {
     var reader = new FileReader();
-    reader.onload = function(e) {
+    reader.onload = function (e) {
       $('#profilePreview').attr('src', e.target.result);
     }
     reader.readAsDataURL(this.files[0]);
@@ -34,8 +36,8 @@ function Table() {
                         <td>${student.Instructor}</td>
                         <td>${student.course}</td>
                         <td class="upde">
-                            <button class="update" data-index="${i}">Update</button>
-                            <button class="delete" data-index="${i}">Delete</button>
+                            <button class="btn btn-warning update" data-index="${i}"><ion-icon name="create-outline"></ion-icon></button>
+                            <button class="btn btn-danger delete" data-index="${i}"><ion-icon name="trash-outline"></ion-icon></button>
                         </td>
                         </tr>`;
       $studentsTable.append(studentRows);
@@ -46,8 +48,8 @@ function Table() {
 }
 
 function updateDelete() {
-  $(".update").each(function() {
-    $(".update").click(function() {
+  $(".update").each(function () {
+    $(".update").click(function () {
       let index = $(this).data("index");
       let student = students[index];
       $('#profilePreview').attr('src', student.profile);
@@ -61,16 +63,17 @@ function updateDelete() {
     });
   });
 
-  $(".delete").each(function() {
-    $(".delete").click(function() {
+  $(".delete").each(function () {
+    $(".delete").click(function () {
       let index = $(this).data("index");
       students.splice(index, 1);
+      saveData();
       Table();
     });
   });
 }
 
-$("#submit").click(function() {
+$("#submit").click(function () {
   let profile = $('#profilePreview').attr('src');
   let subject = $('#subject').val();
   let name = $('#name').val();
@@ -97,6 +100,8 @@ $("#submit").click(function() {
   } else {
     students.push(student);
   }
+  saveData();
+  Table();
 
   $('#profilePreview').attr('src', '');
   $('#subject').val('');
@@ -105,10 +110,7 @@ $("#submit").click(function() {
   $('#grade').val('');
   $('#instructor').val('');
   $('#course').val('');
-  Table();
+
 });
 
-$('#save').click(function() {
-  localStorage.setItem('students', JSON.stringify(students));
-  alert("Successfully saved to the database");
-});
+
